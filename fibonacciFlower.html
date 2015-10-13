@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<body></body>
+<script src = "p5/p5.min.js"></script>
+<script>
+var setup = function(){
+	var canv = createCanvas(window.innerWidth,window.innerHeight);
+	//canv.position(400,0);
+	translate(width/2,height/2);
+	var sca = 1;
+	scale(sca,-sca);
+	strokeWeight(2);
+};
+var state = 0;
+var fibonacci = function(n){
+    var stack = [0,1]; // list of numbers
+    while (stack.length < n+1){
+        stack.push(stack[stack.length-1] + stack[stack.length-2]);
+    }
+    return stack;
+};
+var fibArr = fibonacci(100);
+var fibIndex = Math.max(1,Math.min(100,fibArr.length-3));
+var fibRatio = (fibArr[fibIndex-1]/fibArr[fibIndex+1]);
+var DILATION_SIZE = 0.5;
+//sin = opposite/adjacent
+//cos = adjacent/hypotenuse
+//tan = 
+/*var mouseWheel = function(e){
+	DILATION_SIZE += (DILATION_SIZE + e.deltaY) > 0 && (DILATION_SIZE + e.deltaY) < 40?e.deltaY:0;
+	return false;
+}*/
+var inc = Math.sqrt(fibRatio*(fibArr[3]));
+
+console.log(inc);
+var draw = function() {
+    background(255);
+    var TRANSLATEX = mouseX-(width/2);
+    var TRANSLATEY = mouseY-(height/2);
+    var intensity =10;
+    for (var i = -360*intensity; i <= 360*intensity;i+=inc){
+        //print(i)
+        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)+TRANSLATEX;//(TRANSLATEX*DILATION_SIZE);
+        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
+        point(x, y);
+    }
+    //noLoop();
+    /*for (var i = -360*intensity; i <= 360*intensity;i+=inc){
+        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)+TRANSLATEX;
+        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE)-TRANSLATEY;
+        var x1 = Math.cos((i-1)/fibRatio)*((i)*DILATION_SIZE)+TRANSLATEX;//(TRANSLATEX*DILATION_SIZE);
+        var y1 = Math.sin((i-1)/fibRatio)*((i)*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
+        line(x,y,x1,y1);
+    }
+    for (var i = -360*intensity; i <= 360*intensity;i+=inc){
+        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)+TRANSLATEX;
+        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE)-TRANSLATEY;
+        var x2 = Math.cos((i-2)/fibRatio)*((i)*DILATION_SIZE)+TRANSLATEX;//(TRANSLATEX*DILATION_SIZE);
+        var y2 = Math.sin((i-2)/fibRatio)*((i)*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
+        line(x,y,x2,y2);
+    }*/
+};
+
+
+</script>
+</html>
