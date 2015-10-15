@@ -22,7 +22,7 @@ var fibonacci = function(n){
 var fibArr = fibonacci(100);
 var fibIndex = Math.max(1,Math.min(100,fibArr.length-3));
 var fibRatio = (fibArr[fibIndex-1]/fibArr[fibIndex+1]);
-var DILATION_SIZE = 0.2;
+var DILATION_SIZE = 1;
 
 //sin = opposite/adjacent
 //cos = adjacent/hypotenuse
@@ -33,17 +33,17 @@ var DILATION_SIZE = 0.2;
 }*/
 var inc = Math.sqrt(fibRatio*(fibArr[3]));
 
-console.log(inc);
-console.log([fibIndex,fibRatio,DILATION_SIZE,fibArr.toString()].join("\n"));
+//console.log(inc);
+//console.log([fibIndex,fibRatio,DILATION_SIZE,fibArr.toString()].join("\n"));
 var intensity =10;
 var draw = function() {
     background(255);
     //var TRANSLATEX = mouseX-(width/2);
     //var TRANSLATEY = mouseY-(height/2);
-    for (var i = -(360)*intensity; i <= (360)*intensity;i+=inc){
+    for (var i = (-360)*intensity; i <= (360)*intensity;i+=inc){
         //print(i)
-        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE);//(TRANSLATEX*DILATION_SIZE);
-        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE);//(TRANSLATEY*DILATION_SIZE);
+        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)/width;//(TRANSLATEX*DILATION_SIZE);
+        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE)/height;//(TRANSLATEY*DILATION_SIZE);
         point(x, y);
     }
     //noLoop();
