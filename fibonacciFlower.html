@@ -37,17 +37,18 @@ var inc = fibRatio/ fibArr[4];
 //console.log([fibIndex,fibRatio,DILATION_SIZE,fibArr.toString()].join("\n"));
 var intensity =5;
 var dm = 1;
-var d = Math.abs(Math.sin(dm) * (360*intensity));
+var d = 1
 var draw = function() {
     background(255);
     //var TRANSLATEX = mouseX-(width/2);
     //var TRANSLATEY = mouseY-(height/2);
-    for (var i = (-360)*intensity; i <= (360*intensity) *Math.sin(frameCount);i+=inc){
+    for (var i = (-360)*intensity; i <= (360*intensity)-d;i+=inc){
         //print(i)
         var x = (height/2)*((Math.cos(fibRatio/i))*((i)/((360)*intensity)));//(TRANSLATEX*DILATION_SIZE);
         var y = (height/2)*((Math.sin(fibRatio/i))*((i)/((360)*intensity)));//(TRANSLATEY*DILATION_SIZE);
         point(Math.round(x), Math.round(y));
     }
+    d += sin(frameCount)
     //noLoop();
     /*for (var i = -360*intensity; i <= 360*intensity;i+=inc){
         var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)+TRANSLATEX;
