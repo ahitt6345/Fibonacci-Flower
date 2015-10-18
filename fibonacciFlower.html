@@ -21,7 +21,7 @@ var fibonacci = function(n){
 };
 var fibArr = fibonacci(100);
 var fibIndex = Math.max(1,Math.min(100,fibArr.length-3));
-var fibRatio = (fibArr[fibIndex]/fibArr[fibIndex-1]);
+var fibRatio = (fibArr[fibArr.length-1]/fibArr[fibArr.length-2]);
 var DILATION_SIZE = 1;
 
 //sin = opposite/adjacent
@@ -42,7 +42,7 @@ var draw = function() {
     background(255);
     //var TRANSLATEX = mouseX-(width/2);
     //var TRANSLATEY = mouseY-(height/2);
-    for (var i = (-360)*intensity; i <= d;i+=inc){
+    for (var i = (-360)*intensity; i <= (360*intensity) * Math.abs(Math.sin(frameCount));i+=inc){
         //print(i)
         var x = (height/2)*((Math.cos(fibRatio/i))*((i)/((360)*intensity)));//(TRANSLATEX*DILATION_SIZE);
         var y = (height/2)*((Math.sin(fibRatio/i))*((i)/((360)*intensity)));//(TRANSLATEY*DILATION_SIZE);
@@ -63,7 +63,7 @@ var draw = function() {
         var y2 = Math.sin((i-2)/fibRatio)*((i)*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
         line(x,y,x2,y2);
     }*/
-    d = Math.sin(frameCount) * (360*intensity);
+    //d = Math.sin(frameCount) * (360*intensity);
 };
 
 
