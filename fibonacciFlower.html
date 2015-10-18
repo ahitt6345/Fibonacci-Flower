@@ -36,7 +36,7 @@ var inc = fibRatio/ fibArr[4];
 //console.log(inc);
 //console.log([fibIndex,fibRatio,DILATION_SIZE,fibArr.toString()].join("\n"));
 var intensity =10;
-var dm = 0;
+var dm = 1;
 var draw = function() {
     background(255);
     //var TRANSLATEX = mouseX-(width/2);
@@ -62,7 +62,7 @@ var draw = function() {
         var y2 = Math.sin((i-2)/fibRatio)*((i)*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
         line(x,y,x2,y2);
     }*/
-    dm += Math.sin(frameCount);
+    dm += Math.sin(dm);
 };
 
 
