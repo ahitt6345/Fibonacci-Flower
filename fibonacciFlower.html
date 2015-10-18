@@ -31,7 +31,7 @@ var DILATION_SIZE = 1;
 	DILATION_SIZE += (DILATION_SIZE + e.deltaY) > 0 && (DILATION_SIZE + e.deltaY) < 40?e.deltaY:0;
 	return false;
 }*/
-var inc = Math.sqrt(fibRatio);
+var inc = fibRatio/ fibArr[4];
 
 //console.log(inc);
 //console.log([fibIndex,fibRatio,DILATION_SIZE,fibArr.toString()].join("\n"));
@@ -42,9 +42,9 @@ var draw = function() {
     //var TRANSLATEY = mouseY-(height/2);
     for (var i = (-360)*intensity; i <= (360)*intensity;i+=inc){
         //print(i)
-        var x = (height/2)*(Math.cos(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity));//(TRANSLATEX*DILATION_SIZE);
-        var y = (height/2)*(Math.sin(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity));//(TRANSLATEY*DILATION_SIZE);
-        point(x, y);
+        var x = (height/2)*((Math.cos(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity)));//(TRANSLATEX*DILATION_SIZE);
+        var y = (height/2)*((Math.sin(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity)));//(TRANSLATEY*DILATION_SIZE);
+        point(Math.floor(x), Math.floor(y));
     }
     //noLoop();
     /*for (var i = -360*intensity; i <= 360*intensity;i+=inc){
