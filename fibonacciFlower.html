@@ -42,7 +42,7 @@ var draw = function() {
     background(255);
     //var TRANSLATEX = mouseX-(width/2);
     //var TRANSLATEY = mouseY-(height/2);
-    for (var i = (-360)*intensity; i <= (360*intensity)-d;i+=inc){
+    for (var i = (-360)*intensity; i <= (360*intensity);i+=inc){
         //print(i)
         var x = (height/2)*((Math.cos(fibRatio/i))*((i)/((360)*intensity)));//(TRANSLATEX*DILATION_SIZE);
         var y = (height/2)*((Math.sin(fibRatio/i))*((i)/((360)*intensity)));//(TRANSLATEY*DILATION_SIZE);
