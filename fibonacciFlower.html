@@ -42,8 +42,8 @@ var draw = function() {
     //var TRANSLATEY = mouseY-(height/2);
     for (var i = (-360)*intensity; i <= (360)*intensity;i+=inc){
         //print(i)
-        var x = height/2*(Math.cos(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity));//(TRANSLATEX*DILATION_SIZE);
-        var y = height/2*(Math.sin(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity));//(TRANSLATEY*DILATION_SIZE);
+        var x = (height/2)*(Math.cos(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity));//(TRANSLATEX*DILATION_SIZE);
+        var y = (height/2)*(Math.sin(i/fibRatio))*((i*DILATION_SIZE)/((360)*intensity));//(TRANSLATEY*DILATION_SIZE);
         point(x, y);
     }
     //noLoop();
