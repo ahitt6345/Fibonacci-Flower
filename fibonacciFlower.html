@@ -3,70 +3,484 @@
 <body></body>
 <script src = "p5/p5.min.js"></script>
 <script>
+//IGNORE THIS
 var setup = function(){
-	var canv = createCanvas(window.innerWidth,window.innerHeight);
-	//canv.position(400,0);
-	translate(width/2,height/2);
-	var sca = 1;
-	scale(sca,-sca);
-	strokeWeight(2);
+    var canv = createCanvas(1600,700);
+    //canv.position(400,0);
+    translate(width/2,height/2);
+    var sca = 1;
+    scale(sca,-sca);
+    strokeWeight(2);
 };
+//IGNORE THIS
+var loadingBar = function(x,y,w,h,maxNum){
+    this.position = {};
+    this.position.x = x;
+    this.position.y = y;
+    this.w = w;
+    this.h = h;
+    this.max = maxNum;
+    this.progress = 1;
+    this.col = "#FFFF00";
+};
+//IGNORE THIS
+loadingBar.prototype.update = function(){
+    if (mouseX -width/2 > this.position.x && mouseX -width/2< this.position.x+this.w && mouseY -height/2 > this.position.y &&  height/2-mouseY  < this.position.y +this.h){
+        this.progress = Math.max(0,Math.min(this.max,Math.round((((mouseX-(width/2))-(this.position.x))/(this.w)) * this.max)));
+    }
+};
+//IGNORE THIS
+loadingBar.prototype.draw = function() {
+    
+    stroke(0);
+    fill(255, 255, 255);
+    rect(this.position.x,this.position.y,this.w,this.h);
+    fill(this.col);
+    var res=  Math.max(Math.min((this.progress/this.max)*this.w,this.w),1);
+    rect(this.position.x,this.position.y,res,this.h);
+    fill(0, 0, 0);
+    push();
+    //translate(width/2,350);
+    scale(1,-1);
+    //strokeWeight(1);
+    stroke(255);
+    fill(255);
+    rect(this.position.x-50,this.position.y-50,100,100);
+    stroke(0);
+    fill(0);
+    strokeWeight(1);
+    text((Math.round(this.progress) + " \/ " + this.max),this.position.x ,-this.position.y - 5);
+    pop();
+};
+
 var state = 0;
+// MR ZISMAN IGNORE THESE PARTS!!
 var fibonacci = function(n){
-    var stack = [0,1]; // list of numbers
+    var stack = [1,1]; // list of numbers
     while (stack.length < n+1){
         stack.push(stack[stack.length-1] + stack[stack.length-2]);
     }
     return stack;
 };
-var fibArr = fibonacci(100);
-var fibIndex = Math.max(1,Math.min(100,fibArr.length-3));
-var fibRatio = (fibArr[fibArr.length-1]/fibArr[fibArr.length-2]);
-var DILATION_SIZE = 1;
-
-//sin = opposite/adjacent
-//cos = adjacent/hypotenuse
-//tan = 
-/*var mouseWheel = function(e){
-	DILATION_SIZE += (DILATION_SIZE + e.deltaY) > 0 && (DILATION_SIZE + e.deltaY) < 40?e.deltaY:0;
-	return false;
-}*/
-var inc = fibRatio/ fibArr[4];
-
-//console.log(inc);
-//console.log([fibIndex,fibRatio,DILATION_SIZE,fibArr.toString()].join("\n"));
-var intensity =5;
-var dm = 1;
-var d = 1
-var draw = function() {
-    background(255);
-    //var TRANSLATEX = mouseX-(width/2);
-    //var TRANSLATEY = mouseY-(height/2);
-    for (var i = (-360)*intensity; i <= (360*intensity)*(Math.sin(frameCount)/270);i+=inc){
-        //print(i)
-        var x = (height/2)*((Math.cos(i/fibRatio))*((i)/((360)*intensity)));//(TRANSLATEX*DILATION_SIZE);
-        var y = (height/2)*((Math.sin(i/fibRatio))*((i)/((360)*intensity)));//(TRANSLATEY*DILATION_SIZE);
-        point(Math.round(x), Math.round(y));
-    }
-    //d += sin(frameCount)
-    //noLoop();
-    /*for (var i = -360*intensity; i <= 360*intensity;i+=inc){
-        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)+TRANSLATEX;
-        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE)-TRANSLATEY;
-        var x1 = Math.cos((i-1)/fibRatio)*((i)*DILATION_SIZE)+TRANSLATEX;//(TRANSLATEX*DILATION_SIZE);
-        var y1 = Math.sin((i-1)/fibRatio)*((i)*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
-        line(x,y,x1,y1);
-    }
-    for (var i = -360*intensity; i <= 360*intensity;i+=inc){
-        var x = (Math.cos(i/fibRatio))*(i*DILATION_SIZE)+TRANSLATEX;
-        var y = (Math.sin(i/fibRatio))*(i*DILATION_SIZE)-TRANSLATEY;
-        var x2 = Math.cos((i-2)/fibRatio)*((i)*DILATION_SIZE)+TRANSLATEX;//(TRANSLATEX*DILATION_SIZE);
-        var y2 = Math.sin((i-2)/fibRatio)*((i)*DILATION_SIZE)-TRANSLATEY;//(TRANSLATEY*DILATION_SIZE);
-        line(x,y,x2,y2);
-    }*/
-    //d = Math.sin(frameCount) * (360*intensity);
+var distance = function(x,y,x1,y1){
+    return Math.sqrt(Math.pow(x1-x,2) + Math.pow(y1-y,2)); // pythagorean distance.
 };
+//IGNORE
+var drawLine = function(x0,y0,x1,y1){
+    var dx = Math.abs(x1-x0);
+    var dy = Math.abs(y1-y0);
+    var sx = (x0 < x1) ? 1 : -1;
+    var sy = (y0 < y1) ? 1 : -1;
+    var err = dx-dy;
+    strokeWeight(0.1);
+    while(true){
+        point(x0,y0);
+    
+        if ((x0==x1) && (y0==y1)) break;
+        var e2 = 2*err;
+        if (e2 >-dy){
+            err -= dy;
+            x0  += sx; 
+        } if (e2 < dx){
+            err += dx;
+            y0  += sy; 
+        }
+    }
+};
+//IGNORE
+var toRadians = function(num){
+    return num * 180/Math.PI;
+};
+//IGNORE
+var doRotation = function(x,y,angle){ // Takes x y and angle(degrees);
+    var resArr = [];
+    resArr[0] = x * Math.cos(toRadians(angle))- y * Math.sin(toRadians(angle));
+    resArr[1] = x * Math.sin(toRadians(angle))+ y * Math.cos(toRadians(angle));
+    return resArr; // access x with [0] and y with [1]
+};
+var fibArr = fibonacci(360);
+var fibIndex = fibArr.length-3;
+var goldenRatio = (fibArr[fibIndex+1]/fibArr[fibIndex]); // Somewhere around 1.6 // GOLDEN RATIO
+var DILATION_SIZE = 1;
+var inc = Math.sqrt(goldenRatio/(fibArr[4]));
+console.log(inc,goldenRatio);
+var circulations =2;
+var slider = new loadingBar(700,-100,100,30,10);
+var stack = [];
+// MR ZISMAN IGNORE THESE PARTS!!
+var mouseClicked = function(){
+    background(255);
+    //console.log("X:",mouseX-width/2,"Y",350-mouseY)
+    fill(255);
+    var found = false;
+    for (var i = -(360*circulations); i <= (360)*circulations && !found;i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360*circulations))) * (350);
+        var y = (((s*(i*DILATION_SIZE))/(360*circulations))) * (350);
+        //point(x, y);
+        if (distance(x,y,mouseX-width/2,height/2 - mouseY) <= 4){
+            //var d = distance(x,y,0,0);
+            found = true;
+            ellipse(x,y,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (x) + " Y : " + (y) + " I : " + Math.round(i % 360)+"\nCOS(" + c + ") SIN (" + s+")\n Function: Main Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        }
+    }
+    var TRANSLATIONX = 520;
+    var TRANSLATIONY = 150;
+    for (var i = -(360); i <= (360) && !found;i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONX;// 
+        var y = (((s*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONY;// 
+        if (distance(x,y,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(x,y,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (x) + " Y : " + (y) + " I : " + Math.round(i % 360)+"\nCOS(" + c + ") SIN (" + s+")\n Function: Rightmost Spiral\n Domain: [-117,117]",375,220);
+            pop();
+            break;
+        }
+    }
+    TRANSLATIONX = -520;
+    TRANSLATIONY = 150;
+    for (var i = -(360); i <= (360) && !found;i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONX;//(TRANSLATEX*DILATION_SIZE);
+        var y = (((s*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONY;//(TRANSLATEY*DILATION_SIZE);
+        if (distance(x,y,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(x,y,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (x) + " Y : " + (y) + " I : " + Math.round(i % 360)+"\nCOS(" + c + ") SIN (" + s+")\n Function: Leftmost Spiral",375,220);
+            pop();
+            break;
+        }
+    }
+    var r = Math.pow(350,2);
+    for (var i = -350; i <= 350 && !found; i ++){
+        var y = -Math.sqrt(-Math.pow(i,2) + r);//one half of circle // Math.pow(20,2) === 20 ^ 2 === 20 * 20 === 4000
+        var y1 = Math.sqrt(-Math.pow(i,2) + r); // other half of circle
+        if (distance(i,y,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(i,y,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (i) + " Y : " + (y) + "\n Radius: 350"+ "\n Function: Circle Around Main Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        } if (distance(i,y1,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(i,y1,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (i) + " Y : " + (y1) + "\nRadius: 350\n Function: Circle Around Main Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        }
+    }
+    var r = (120*120);
+    for (var i = -120; i <= 120 && !found; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r);//one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r); // other half of circle
+        //point(i-520,y + 150);
+        //point(i-520,y1 + 150);
+        if (distance(i-520,y+150,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(i-520,y+150,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (i) + " Y : " + (y) + "\n Radius: 120"+ "\n Function: Circle Around leftmost Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        } if (distance(i-520,y1+150,mouseX-width/2,height/2 - mouseY) <= 4){
+            ellipse(i-520,y1+150,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (i) + " Y : " + (y1) + "\nRadius: 350\n Function: Circle Around leftmost Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        } 
+    }
+    var r = (120*120);
+    for (var i = -120; i <= 120 && !found; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r);//one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r); // other half of circle
+        //point(i+520,y + 150);
+        //point(i+520,y1 + 150);
+        if (distance(i+520,y+150,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(i+520,y+150,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (i+520) + " Y : " + (y+150) + "\n Radius: 120"+ "\n Function: Circle Around rightmost Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        } if (distance(i+520,y1+150,mouseX-width/2,height/2 - mouseY) <= 4){
+            found = true;
+            ellipse(i+520,y1+150,10,10);
+            push();
+            translate(0,0);
+            scale(1,-1);
+            strokeWeight(1);
+            text("X : " + (i+520) + " Y : " + (y1+150) + "\nRadius: 350\n Function: Circle Around rightmost Spiral\n Domain: [-350,350]",375,220);
+            pop();
+            break;
+        } 
+    }
+    loop();
+    return;
+};
+//IGNORE THIS
+var mouseDragged = function(){
+    background(255);
+    slider.update();
+    slider.draw();
+    circulations = slider.progress;
+    loop();
+};
+//IGNORE THIS
+var mouseMoved = function(){
 
-
+    push();
+    translate(0,0);
+    scale(1,-1);
+    stroke(255);
+    fill(255);
+    rect(650,120,80,40);
+    strokeWeight(1);
+    stroke(0);
+    //fill(0);
+    text("Mouse X:" + Math.round(mouseX - width/2) + "\nMouse Y:" + Math.round(height/2-mouseY),650,140);
+    pop();
+};
+//DONT IGNORE THIS!! THIS IS WHERE THE CODE IS!!
+var draw = function() {
+    slider.draw();
+    stroke(0);
+    strokeWeight(2);
+    for (var i =  -350; i < 350;i++){
+        point(i,(349)); // y = 350 //top of the screen line
+        point(i,(-349)); // y = -350 //bottom of the screen line
+        point(350,i); // x = 350 //right of the screen
+        point(-350,i); // x = -350 left of the screen
+    }
+    for (var i = -(360*circulations); i <= (360)*circulations;i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360*circulations))) * (350);//
+        var y = (((s*(i*DILATION_SIZE))/(360*circulations))) * (350);//
+            var x1 = (((Math.cos((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360*circulations)) * (350);
+            var y1 = (((Math.sin((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360*circulations)) * (350);
+            stroke(0,255,0);
+            point(x, y);
+            strokeWeight(0.1);
+            stroke(0);
+            var m = (y1 - y)/(x1-x); 
+            if (distance(x1,y1,0,0) <= 350){
+                //drawLine(x,y,x1,y1) // Is just too slow, using the one below for speed.
+                line(x,y,x1,y1); // this is ten times faster than my implementation. (somehow...)
+            }
+            // just imagine...
+            // slope = (x1-x)/(y1-y)
+            // a = min(x,x1)
+            // b = max(x1,x)
+            // c = min(y,y1)
+            // m = max(y1,y)
+            // f(z) = slope * z {a < z < b}
+            // f(d) = slope * d {c < d < m}
+            strokeWeight(2);
+    }
+    var r = ((350) * (350));
+    stroke(0);
+    for (var i = -360; i <= 360; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r); //one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r); // other half of circle
+        point(i,y); // y = -sqrt(-x^2 + 350^2) {-360 <= x <= 360}
+        point(i,y1); // y = sqrt(x^2 + 350^2) {-360 <= x <= 360}
+    }
+    var r = (120*120);
+    for (var i = -120; i <= 120; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r);//one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r); // other half of circle
+        point(i-520,y + 150); // y = -sqrt(-(x-520)^2 + 120^2) {-120 <= x <= 120} 
+        point(i-520,y1 + 150); // y = sqrt(-(x-520)^2 + 120^2) {-120 <= x <= 120} 
+    }
+    var r = (120*120);
+    for (var i = -120; i <= 120; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r);//one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r); // other half of circle
+        point(i+520,y + 150); // y = -sqrt(-(x+520)^2 + 120^2) {-120 <= x <= 120} 
+        point(i+520,y1 + 150); // y = -sqrt((x+520)^2 + 120^2) {-120 <= x <= 120} 
+    }
+    stroke(0,255,0);
+    var TRANSLATIONX = 520;
+    var TRANSLATIONY = 150;
+    for (var i = -(360); i <= (360);i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONX; // I have no idea how to make this more clear
+        var y = (((s*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONY; // I have no idea how to make this more clear
+        //if (Math.round(i*goldenRatio) % 1 === 0){
+            var x1 = (((Math.cos((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (height/6)+ TRANSLATIONX;  // I have no idea how to make this more clear
+            var y1 = (((Math.sin((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (height/6)+ TRANSLATIONY;  // I have no idea how to make this more clear
+            point(x, y);// place point at (x,y)
+            strokeWeight(0.1); 
+            line(x,y,x1,y1); // this is ten times faster than my implementation.
+            // just imagine...
+            // slope = (x1-x)/(y1-y)
+            // a = min(x,x1)
+            // b = max(x1,x)
+            // c = min(y,y1)
+            // m = max(y1,y)
+            // f(z) = slope * z {a < z < b}
+            // f(d) = slope * d {c < d < m}
+            strokeWeight(2);
+    }
+    var TRANSLATIONX = -520;
+    var TRANSLATIONY = 150;
+    for (var i = -(360); i <= (360);i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360))) * (700/6) + TRANSLATIONX;  // I have no idea how to make this more clear
+        var y = (((s*(i*DILATION_SIZE))/(360))) * (700/6) + TRANSLATIONY;  // I have no idea how to make this more clear
+            var x1 = (((Math.cos((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (700/6)+ TRANSLATIONX; // I have no idea how to make this more clear
+            var y1 = (((Math.sin((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (700/6)+ TRANSLATIONY;  // I have no idea how to make this more clear
+            point(x, y);
+            strokeWeight(0.1);
+            var m = (y1 - y)/(x1-x); 
+            line(x,y,x1,y1); // this is ten times faster than my implementation.
+            // just imagine...
+            // 
+            // slope = (x1-x)/(y1-y)
+            // a = min(x,x1)
+            // b = max(x1,x)
+            // c = min(y,y1)
+            // m = max(y1,y)
+            // f(z) = slope * z {a < z < b}
+            // f(d) = slope * d {c < d < m}
+            strokeWeight(2);
+    }
+    var TRANSLATIONX = 520;
+    var TRANSLATIONY = 230;
+    for (var i = -(360); i <= (360);i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONX; // I have no idea how to make this more clear
+        var y = (((s*(i*DILATION_SIZE))/(360))) * (height/6) + TRANSLATIONY; // I have no idea how to make this more clear
+        //if (Math.round(i*goldenRatio) % 1 === 0){
+            var x1 = (((Math.cos((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (height/6)+ TRANSLATIONX;  // I have no idea how to make this more clear
+            var y1 = (((Math.sin((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (height/6)+ TRANSLATIONY;  // I have no idea how to make this more clear
+            point(-x, -y);// place point at (x,y)
+            strokeWeight(0.1); 
+            line(-x,-y,-x1,-y1); // this is ten times faster than my implementation.
+            // just imagine...
+            // slope = (x1-x)/(y1-y)
+            // a = min(x,x1)
+            // b = max(x1,x)
+            // c = min(y,y1)
+            // m = max(y1,y)
+            // f(z) = slope * z {a < z < b}
+            // f(d) = slope * d {c < d < m}
+            strokeWeight(2);
+    }
+    var TRANSLATIONX = -520;
+    var TRANSLATIONY = 230;
+    for (var i = -(360); i <= (360);i+=inc){
+        var c = Math.cos(i/goldenRatio);
+        var s = Math.sin(i/goldenRatio);
+        var x = (((c*(i*DILATION_SIZE))/(360))) * (700/6) + TRANSLATIONX;  // I have no idea how to make this more clear
+        var y = (((s*(i*DILATION_SIZE))/(360))) * (700/6) + TRANSLATIONY;  // I have no idea how to make this more clear
+            var x1 = (((Math.cos((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (700/6)+ TRANSLATIONX; // I have no idea how to make this more clear
+            var y1 = (((Math.sin((i-(inc*-180))/goldenRatio))*((i-(inc*-180))*DILATION_SIZE))/(360)) * (700/6)+ TRANSLATIONY;  // I have no idea how to make this more clear
+            point(-x, -y);
+            strokeWeight(0.1);
+            var m = (y1 - y)/(x1-x); 
+            line(-x,-y,-x1,-y1); // this is ten times faster than my implementation.
+            // just imagine...
+            // 
+            // slope = (x1-x)/(y1-y)
+            // a = min(x,x1)
+            // b = max(x1,x)
+            // c = min(y,y1)
+            // m = max(y1,y)
+            // f(z) = slope * z {a < z < b}
+            // f(d) = slope * d {c < d < m}
+            strokeWeight(2);
+    }
+    stroke(0);
+    var r = (120*120);
+    for (var i = -120; i <= 120; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r)+ 230;//one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r)+ 230; // other half of circle
+        point(-(i-520),-y); // y = -sqrt(-(x-520)^2 + 120^2) {-120 <= x <= 120} 
+        point(-(i-520),-y1); // y = sqrt(-(x-520)^2 + 120^2) {-120 <= x <= 120} 
+    }
+    var r = (120*120);
+    for (var i = -120; i <= 120; i += 1){
+        var y = -Math.sqrt(-Math.pow(i,2) + r)+ 230;//one half of circle 
+        var y1 = Math.sqrt(-Math.pow(i,2) + r)+ 230; // other half of circle
+        point(-(i+520),-y); // y = -sqrt(-(x+520)^2 + 120^2) {-120 <= x <= 120} 
+        point(-(i+520),-y1); // y = -sqrt((x+520)^2 + 120^2) {-120 <= x <= 120} 
+    }
+    stroke("brown");
+    for (var i = -height/4+10;i < height/4-10;i+=0.5){
+        point(i+height/1.35,Math.abs(i)*(1 + 2/3) - 100); // y = (5/3)* Math.abs(i-700/1.35) - 100
+        point(i-height/1.35,Math.abs(i)*(1 + 2/3) - 100); // y = (5/3)* Math.abs(i+700/1.35) - 100
+        point(i+height/1.35,Math.pow(i,2)/100-100); // y = 0.01 * ((i+700/1.35)^2) - 100
+        point(i-height/1.35,Math.pow(i,2)/100-100); // y = 0.01 * ((i-700/1.35)^2) - 100
+    }
+    stroke(0);
+    for (var i = 0; i < 100;i = i + 1){
+        var x = i-700;
+        var y = sqrt(i)-50;
+        point(x,y);
+    }
+    for (var i = -100; i < 0;i = i + 1){
+        var x = i-700;
+        var y = sqrt(0-i)-50;
+        point(x,y);
+    }
+    for (var i = 0; i < 100;i = i + 1){
+        var x = i-700;
+        var y = -sqrt(i)-50;
+        point(x,y);
+    }
+    for (var i = -100; i < 0;i = i + 1){
+        var x = i-700;
+        var y = -sqrt(0-i)-50;
+        point(x,y);
+    }
+    for (var i = -height/4+10;i < height/4-10;i+=0.5){
+        point(i+height/1.35,-Math.abs(i)*(1 + 2/3) - 0); // y = (5/3)* Math.abs(i-700/1.35) - 100
+        point(i-height/1.35,-Math.abs(i)*(1 + 2/3) - 0); // y = (5/3)* Math.abs(i+700/1.35) - 100
+        point(i+height/1.35,-Math.pow(i,2)/100-0); // y = 0.01 * ((i+700/1.35)^2) - 100
+        point(i-height/1.35,-Math.pow(i,2)/100-0); // y = 0.01 * ((i-700/1.35)^2) - 100
+    }
+    noLoop();
+};
 </script>
 </html>
